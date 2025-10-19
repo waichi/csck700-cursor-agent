@@ -50,6 +50,86 @@
     </footer>
 
     <script>
+        // Update cart quantity via AJAX
+        function updateCartQuantity(productId, quantity) {
+            quantity = parseInt(quantity);
+            
+            if (isNaN(quantity) || quantity < 0) {
+                showNotification('Please enter a valid quantity', 'error');
+                return;
+            }
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('quantity', quantity);
+            
+            fetch('/update_cart/' + productId, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    return response.text();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then(function(html) {
+                // Parse the response to get the flash message
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const flashMessages = doc.querySelectorAll('.flash-success, .flash-info');
+                
+                // Show success message
+                if (flashMessages.length > 0) {
+                    showNotification(flashMessages[0].textContent, 'success');
+                }
+                
+                // Reload the cart page to show updated totals
+                setTimeout(function() {
+                    window.location.reload();
+                }, 500);
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                showNotification('Error updating cart', 'error');
+            });
+        }
+        
+        // Remove from cart via AJAX
+        function removeFromCart(productId, productName) {
+            if (!confirm('Remove ' + productName + ' from cart?')) {
+                return;
+            }
+            
+            fetch('/remove_from_cart/' + productId)
+                .then(function(response) {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('Network response was not ok');
+                })
+                .then(function(html) {
+                    // Parse the response to get the flash message
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const flashMessages = doc.querySelectorAll('.flash-info');
+                    
+                    // Show success message
+                    if (flashMessages.length > 0) {
+                        showNotification(productName + ' removed from cart', 'info');
+                    }
+                    
+                    // Reload the cart page to show updated cart
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 500);
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    showNotification('Error removing product from cart', 'error');
+                });
+        }
+        
         // Add to cart via AJAX
         function addToCart(productId, productName) {
             fetch('/add_to_cart/' + productId)

@@ -27,7 +27,7 @@
                         </td>
                         <td>¥{{ item.product.price }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('update_cart', product_id=item.product.id) }}" class="quantity-form">
+                            <div class="quantity-form">
                                 <input 
                                     type="number" 
                                     name="quantity" 
@@ -35,17 +35,19 @@
                                     min="0"
                                     max="99"
                                     class="quantity-input"
+                                    data-product-id="{{ item.product.id }}"
+                                    onchange="updateCartQuantity({{ item.product.id }}, this.value)"
                                 >
-                                <button type="submit" class="btn btn-update">Update</button>
-                            </form>
+                                <button type="button" class="btn btn-update" onclick="updateCartQuantity({{ item.product.id }}, document.querySelector('input[data-product-id=\'{{ item.product.id }}\']').value)">Update</button>
+                            </div>
                         </td>
                         <td class="subtotal">¥{{ item.subtotal }}</td>
                         <td>
-                            <a href="{{ url_for('remove_from_cart', product_id=item.product.id) }}" 
-                               class="btn btn-remove"
-                               onclick="return confirm('Remove this item from cart?')">
+                            <button type="button" 
+                                    class="btn btn-remove"
+                                    onclick="removeFromCart({{ item.product.id }}, '{{ item.product.name }}')">
                                 Remove
-                            </a>
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}

@@ -1,0 +1,17 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sleeveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d299c2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fef9d7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="#f0f0f0"/>
+  <rect x="120" y="100" width="160" height="120" fill="url(#sleeveGrad)" rx="10"/>
+  <rect x="120" y="100" width="160" height="120" fill="#9c27b0" rx="10" opacity="0.3"/>
+  <line x1="130" y1="130" x2="270" y2="130" stroke="#fff" stroke-width="3"/>
+  <line x1="130" y1="150" x2="270" y2="150" stroke="#fff" stroke-width="3"/>
+  <line x1="130" y1="170" x2="270" y2="170" stroke="#fff" stroke-width="3"/>
+  <line x1="130" y1="190" x2="270" y2="190" stroke="#fff" stroke-width="3"/>
+  <text x="200" y="270" font-family="Arial" font-size="16" fill="#333" text-anchor="middle">Laptop Sleeve</text>
+</svg>
+

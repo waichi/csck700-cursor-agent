@@ -1,0 +1,16 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="portableGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a8caba;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5d4e75;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="#f0f0f0"/>
+  <rect x="120" y="80" width="160" height="120" fill="url(#portableGrad)" rx="5"/>
+  <rect x="125" y="85" width="150" height="110" fill="#1a1a1a" rx="5"/>
+  <rect x="130" y="90" width="140" height="100" fill="#0a0a0a"/>
+  <rect x="135" y="95" width="130" height="90" fill="#1565c0" opacity="0.3"/>
+  <rect x="190" y="200" width="20" height="30" fill="#c0c0c0"/>
+  <text x="200" y="270" font-family="Arial" font-size="16" fill="#333" text-anchor="middle">Portable Monitor</text>
+</svg>
+

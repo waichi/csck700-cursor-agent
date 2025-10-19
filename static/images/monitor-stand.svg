@@ -1,0 +1,17 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="monitorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9a9e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fecfef;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="#f0f0f0"/>
+  <rect x="130" y="80" width="140" height="100" fill="#e0e0e0" rx="5"/>
+  <rect x="130" y="80" width="140" height="100" fill="url(#monitorGrad)" rx="5" opacity="0.3"/>
+  <rect x="140" y="90" width="120" height="80" fill="#1a1a1a" rx="5"/>
+  <rect x="145" y="95" width="110" height="70" fill="#0a0a0a"/>
+  <rect x="190" y="180" width="20" height="40" fill="#c0c0c0"/>
+  <rect x="160" y="220" width="80" height="10" fill="#a0a0a0" rx="5"/>
+  <text x="200" y="270" font-family="Arial" font-size="16" fill="#333" text-anchor="middle">Monitor Stand</text>
+</svg>
+

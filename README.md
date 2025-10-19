@@ -50,8 +50,10 @@ This project contains a fully functional shopping web application built with Fla
 
 2. **Open your browser** and navigate to:
    ```
-   http://localhost:5000
+   http://localhost:5001
    ```
+   
+   **Note:** Port 5000 is used by macOS AirPlay Receiver. The application runs on port 5001 to avoid conflicts.
 
 ### Project Structure
 

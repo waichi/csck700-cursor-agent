@@ -441,17 +441,17 @@ body {
     margin-top: 0.5rem;
 }
 
-.quantity-form {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
+.quantity-input {
+    width: 70px;
+    padding: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
 }
 
-.quantity-input {
-    width: 60px;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+.quantity-input:focus {
+    outline: none;
+    border-color: #667eea;
 }
 
 .subtotal {

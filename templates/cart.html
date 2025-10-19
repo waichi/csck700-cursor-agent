@@ -27,19 +27,16 @@
                         </td>
                         <td>¥{{ item.product.price }}</td>
                         <td>
-                            <div class="quantity-form">
-                                <input 
-                                    type="number" 
-                                    name="quantity" 
-                                    value="{{ item.quantity }}" 
-                                    min="0"
-                                    max="99"
-                                    class="quantity-input"
-                                    data-product-id="{{ item.product.id }}"
-                                    onchange="updateCartQuantity({{ item.product.id }}, this.value)"
-                                >
-                                <button type="button" class="btn btn-update" onclick="updateCartQuantity({{ item.product.id }}, document.querySelector('input[data-product-id=\'{{ item.product.id }}\']').value)">Update</button>
-                            </div>
+                            <input 
+                                type="number" 
+                                name="quantity" 
+                                value="{{ item.quantity }}" 
+                                min="0"
+                                max="99"
+                                class="quantity-input"
+                                data-product-id="{{ item.product.id }}"
+                                onchange="updateCartQuantity({{ item.product.id }}, this.value)"
+                            >
                         </td>
                         <td class="subtotal">¥{{ item.subtotal }}</td>
                         <td>

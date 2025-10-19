@@ -53,8 +53,43 @@ def validate_email(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email) is not None
 
+def validate_input_security(text):
+    """Validate input for potentially dangerous patterns - returns (is_valid, error_message)"""
+    if not text:
+        return True, None
+    
+    import re
+    
+    # Check for script tags
+    if re.search(r'<script[^>]*>', text, re.IGNORECASE):
+        return False, "Input contains script tags which are not allowed"
+    
+    # Check for javascript: protocol
+    if re.search(r'javascript:', text, re.IGNORECASE):
+        return False, "Javascript protocol is not allowed"
+    
+    # Check for on* event handlers (e.g., onclick, onerror, etc.)
+    if re.search(r'on\w+\s*=', text, re.IGNORECASE):
+        return False, "Event handlers are not allowed"
+    
+    # Check for data: protocol
+    if re.search(r'data:\s*text/html', text, re.IGNORECASE):
+        return False, "Data URIs are not allowed"
+    
+    # Check for common SQL injection patterns
+    sql_patterns = [r'(\bOR\b|\bAND\b)\s+\d+\s*=\s*\d+', r';\s*DROP\s+TABLE', r'UNION\s+SELECT', r'/\*.*?\*/']
+    for pattern in sql_patterns:
+        if re.search(pattern, text, re.IGNORECASE):
+            return False, "Potentially malicious SQL patterns detected"
+    
+    # Check for HTML tags (basic check)
+    if re.search(r'<[^>]+>', text):
+        return False, "HTML tags are not allowed"
+    
+    return True, None
+
 def sanitize_input(text):
-    """Sanitize user input to prevent injection attacks"""
+    """Sanitize user input to prevent injection attacks (fallback - should not be needed if validation works)"""
     if not text:
         return ""
     
@@ -63,21 +98,6 @@ def sanitize_input(text):
     
     # Escape HTML special characters to prevent XSS attacks
     text = escape(text, quote=True)
-    
-    # Additional security: Remove potentially dangerous patterns
-    import re
-    
-    # Remove script tags and their content
-    text = re.sub(r'<script[^>]*>.*?</script>', '', text, flags=re.IGNORECASE | re.DOTALL)
-    
-    # Remove javascript: protocol
-    text = re.sub(r'javascript:', '', text, flags=re.IGNORECASE)
-    
-    # Remove on* event handlers (e.g., onclick, onerror, etc.)
-    text = re.sub(r'on\w+\s*=', '', text, flags=re.IGNORECASE)
-    
-    # Remove data: protocol that could be used for data URIs
-    text = re.sub(r'data:\s*text/html', '', text, flags=re.IGNORECASE)
     
     return text
 
@@ -179,6 +199,11 @@ def enquiry():
             errors.append('Name is required')
         elif len(name) > 100:
             errors.append('Name must be less than 100 characters')
+        else:
+            # Security validation for name
+            is_valid, error_msg = validate_input_security(name)
+            if not is_valid:
+                errors.append(f'Name: {error_msg}')
             
         if not email:
             errors.append('Email is required')
@@ -186,23 +211,38 @@ def enquiry():
             errors.append('Email must be less than 255 characters')
         elif not validate_email(email):
             errors.append('Invalid email format')
+        else:
+            # Security validation for email
+            is_valid, error_msg = validate_input_security(email)
+            if not is_valid:
+                errors.append(f'Email: {error_msg}')
             
         if not subject:
             errors.append('Subject is required')
         elif len(subject) > 200:
             errors.append('Subject must be less than 200 characters')
+        else:
+            # Security validation for subject
+            is_valid, error_msg = validate_input_security(subject)
+            if not is_valid:
+                errors.append(f'Subject: {error_msg}')
             
         if not message:
             errors.append('Message is required')
         elif len(message) > 2000:
             errors.append('Message must be less than 2000 characters')
+        else:
+            # Security validation for message
+            is_valid, error_msg = validate_input_security(message)
+            if not is_valid:
+                errors.append(f'Message: {error_msg}')
         
         if errors:
             for error in errors:
                 flash(error, 'error')
             return render_template('enquiry.html')
         
-        # Sanitize inputs
+        # Sanitize inputs (as a final safety measure)
         name = sanitize_input(name)
         email = sanitize_input(email)
         subject = sanitize_input(subject)

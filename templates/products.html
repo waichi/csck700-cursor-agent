@@ -38,17 +38,20 @@
                         <form method="POST" action="{{ url_for('rate_product', product_id=product.id) }}" class="rating-form" id="rating-form-{{ product.id }}">
                             <label>Rate this product:</label>
                             <div class="star-rating" data-product-id="{{ product.id }}">
-                                <input type="radio" name="rating" value="5" id="star5-{{ product.id }}">
+                                <input type="radio" name="rating" value="5" id="star5-{{ product.id }}" {% if ratings.get(product.id|string) == 5 %}checked{% endif %}>
                                 <label for="star5-{{ product.id }}" title="5 stars">★</label>
-                                <input type="radio" name="rating" value="4" id="star4-{{ product.id }}">
+                                <input type="radio" name="rating" value="4" id="star4-{{ product.id }}" {% if ratings.get(product.id|string) == 4 %}checked{% endif %}>
                                 <label for="star4-{{ product.id }}" title="4 stars">★</label>
-                                <input type="radio" name="rating" value="3" id="star3-{{ product.id }}">
+                                <input type="radio" name="rating" value="3" id="star3-{{ product.id }}" {% if ratings.get(product.id|string) == 3 %}checked{% endif %}>
                                 <label for="star3-{{ product.id }}" title="3 stars">★</label>
-                                <input type="radio" name="rating" value="2" id="star2-{{ product.id }}">
+                                <input type="radio" name="rating" value="2" id="star2-{{ product.id }}" {% if ratings.get(product.id|string) == 2 %}checked{% endif %}>
                                 <label for="star2-{{ product.id }}" title="2 stars">★</label>
-                                <input type="radio" name="rating" value="1" id="star1-{{ product.id }}">
+                                <input type="radio" name="rating" value="1" id="star1-{{ product.id }}" {% if ratings.get(product.id|string) == 1 %}checked{% endif %}>
                                 <label for="star1-{{ product.id }}" title="1 star">★</label>
                             </div>
+                            {% if ratings.get(product.id|string) %}
+                                <div class="rating-display">Your rating: {{ ratings.get(product.id|string) }} ⭐</div>
+                            {% endif %}
                         </form>
                     </div>
                     <div class="product-footer">

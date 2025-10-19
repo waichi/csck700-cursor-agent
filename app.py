@@ -34,6 +34,10 @@ def get_cart():
     """Get current cart from session"""
     return session.get('cart', {})
 
+def get_ratings():
+    """Get current ratings from session"""
+    return session.get('ratings', {})
+
 def get_cart_total():
     """Calculate total price of items in cart"""
     cart = get_cart()
@@ -74,15 +78,21 @@ def products():
     else:
         filtered_products = PRODUCTS
     
-    return render_template('products.html', products=filtered_products, search_query=search_query)
+    # Get ratings for all products
+    ratings = get_ratings()
+    
+    return render_template('products.html', products=filtered_products, search_query=search_query, ratings=ratings)
 
 @app.route('/rate_product/<int:product_id>', methods=['POST'])
 def rate_product(product_id):
     """Handle product rating"""
     rating = request.form.get('rating')
     if rating and 1 <= int(rating) <= 5:
-        # In a real application, this would be stored in a database
-        flash(f'Thank you for rating this product {rating} stars!', 'success')
+        ratings = get_ratings()
+        ratings[str(product_id)] = int(rating)
+        session['ratings'] = ratings
+        product_name = next((p['name'] for p in PRODUCTS if p['id'] == product_id), 'this product')
+        flash(f'Thank you for rating {product_name} {rating} stars!', 'success')
     return redirect(url_for('products'))
 
 @app.route('/add_to_cart/<int:product_id>')

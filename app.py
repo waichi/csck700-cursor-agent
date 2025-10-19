@@ -220,6 +220,11 @@ def checkout():
             })
     
     total = get_cart_total()
+    
+    # Clear the cart after checkout
+    session['cart'] = {}
+    flash('Thank you for your order! Your cart has been cleared.', 'success')
+    
     return render_template('checkout.html', cart_items=cart_items, total=total)
 
 if __name__ == '__main__':

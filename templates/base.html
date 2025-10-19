@@ -48,6 +48,59 @@
             <p>&copy; 2025 IKW Store. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        // Interactive star rating
+        document.querySelectorAll('.star-rating').forEach(function(rating) {
+            const inputs = rating.querySelectorAll('input[type="radio"]');
+            const labels = rating.querySelectorAll('label');
+            
+            inputs.forEach(function(input) {
+                input.addEventListener('change', function() {
+                    const form = this.closest('form');
+                    form.submit();
+                });
+            });
+            
+            labels.forEach(function(label) {
+                label.addEventListener('mouseenter', function() {
+                    const input = this.previousElementSibling;
+                    const value = input.value;
+                    highlightStars(rating, value);
+                });
+                
+                label.addEventListener('mouseleave', function() {
+                    const checked = rating.querySelector('input:checked');
+                    if (checked) {
+                        highlightStars(rating, checked.value);
+                    } else {
+                        resetStars(rating);
+                    }
+                });
+            });
+        });
+        
+        function highlightStars(rating, value) {
+            const labels = rating.querySelectorAll('label');
+            labels.forEach(function(label, index) {
+                if (5 - index <= value) {
+                    label.style.color = '#ffd700';
+                    label.style.transform = 'scale(1.2)';
+                } else {
+                    label.style.color = '#ddd';
+                    label.style.transform = 'scale(1)';
+                }
+            });
+        }
+        
+        function resetStars(rating) {
+            const labels = rating.querySelectorAll('label');
+            labels.forEach(function(label) {
+                label.style.color = '#ddd';
+                label.style.transform = 'scale(1)';
+            });
+        }
+    </script>
 </body>
 </html>
 

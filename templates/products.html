@@ -35,16 +35,20 @@
                     <h3 class="product-name">{{ product.name }}</h3>
                     <p class="product-description">{{ product.description }}</p>
                     <div class="product-rating">
-                        <form method="POST" action="{{ url_for('rate_product', product_id=product.id) }}" class="rating-form">
+                        <form method="POST" action="{{ url_for('rate_product', product_id=product.id) }}" class="rating-form" id="rating-form-{{ product.id }}">
                             <label>Rate this product:</label>
-                            <select name="rating" onchange="this.form.submit()">
-                                <option value="">-- Select --</option>
-                                <option value="1">1 ⭐</option>
-                                <option value="2">2 ⭐⭐</option>
-                                <option value="3">3 ⭐⭐⭐</option>
-                                <option value="4">4 ⭐⭐⭐⭐</option>
-                                <option value="5">5 ⭐⭐⭐⭐⭐</option>
-                            </select>
+                            <div class="star-rating" data-product-id="{{ product.id }}">
+                                <input type="radio" name="rating" value="5" id="star5-{{ product.id }}">
+                                <label for="star5-{{ product.id }}" title="5 stars">★</label>
+                                <input type="radio" name="rating" value="4" id="star4-{{ product.id }}">
+                                <label for="star4-{{ product.id }}" title="4 stars">★</label>
+                                <input type="radio" name="rating" value="3" id="star3-{{ product.id }}">
+                                <label for="star3-{{ product.id }}" title="3 stars">★</label>
+                                <input type="radio" name="rating" value="2" id="star2-{{ product.id }}">
+                                <label for="star2-{{ product.id }}" title="2 stars">★</label>
+                                <input type="radio" name="rating" value="1" id="star1-{{ product.id }}">
+                                <label for="star1-{{ product.id }}" title="1 star">★</label>
+                            </div>
                         </form>
                     </div>
                     <div class="product-footer">

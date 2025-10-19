@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - IKW Store{% endblock %}
+
+{% block content %}
+<div class="enquiry-container">
+    <h1>Contact Us</h1>
+    <p class="enquiry-intro">Have a question or need assistance? Fill out the form below and we'll get back to you.</p>
+
+    <form method="POST" action="{{ url_for('enquiry') }}" class="enquiry-form">
+        <div class="form-group">
+            <label for="name">Name <span class="required">*</span></label>
+            <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                required
+                placeholder="Enter your full name"
+                class="form-input"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                required
+                placeholder="your.email@example.com"
+                class="form-input"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="subject">Subject <span class="required">*</span></label>
+            <input 
+                type="text" 
+                id="subject" 
+                name="subject" 
+                required
+                placeholder="What is this about?"
+                class="form-input"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message <span class="required">*</span></label>
+            <textarea 
+                id="message" 
+                name="message" 
+                required
+                rows="6"
+                placeholder="Enter your message here..."
+                class="form-textarea"
+            ></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit Enquiry</button>
+            <button type="reset" class="btn btn-secondary">Clear Form</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

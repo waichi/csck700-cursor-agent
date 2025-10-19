@@ -1,0 +1,217 @@
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from datetime import datetime
+import random
+import re
+
+app = Flask(__name__)
+app.secret_key = 'your-secret-key-change-in-production'
+
+# Product data - 20 computer accessories
+PRODUCTS = [
+    {"id": 1, "name": "Wireless Mouse", "description": "Ergonomic wireless mouse with 2.4GHz connectivity", "price": 2500, "image": "mouse.jpg"},
+    {"id": 2, "name": "Mechanical Keyboard", "description": "RGB backlit mechanical gaming keyboard", "price": 8500, "image": "keyboard.jpg"},
+    {"id": 3, "name": "USB-C Hub", "description": "7-in-1 USB-C hub with HDMI and card readers", "price": 3200, "image": "hub.jpg"},
+    {"id": 4, "name": "Laptop Stand", "description": "Adjustable aluminum laptop stand for ergonomics", "price": 4500, "image": "stand.jpg"},
+    {"id": 5, "name": "Webcam HD", "description": "1080p HD webcam with built-in microphone", "price": 6800, "image": "webcam.jpg"},
+    {"id": 6, "name": "Wireless Headphones", "description": "Noise-cancelling over-ear headphones", "price": 12000, "image": "headphones.jpg"},
+    {"id": 7, "name": "USB Flash Drive 64GB", "description": "High-speed USB 3.0 flash drive", "price": 1800, "image": "usb.jpg"},
+    {"id": 8, "name": "Monitor Stand", "description": "Dual monitor mount with gas spring arms", "price": 9800, "image": "monitor-stand.jpg"},
+    {"id": 9, "name": "Cable Management Kit", "description": "Organizer clips and sleeves for cable management", "price": 1500, "image": "cables.jpg"},
+    {"id": 10, "name": "Laptop Cooling Pad", "description": "USB-powered cooling pad with 5 fans", "price": 3200, "image": "cooling.jpg"},
+    {"id": 11, "name": "Bluetooth Speaker", "description": "Portable waterproof Bluetooth speaker", "price": 5500, "image": "speaker.jpg"},
+    {"id": 12, "name": "External SSD 1TB", "description": "Portable NVMe external SSD", "price": 12500, "image": "ssd.jpg"},
+    {"id": 13, "name": "Gaming Mouse Pad", "description": "Large RGB gaming mouse pad", "price": 2800, "image": "mousepad.jpg"},
+    {"id": 14, "name": "USB-C Cable", "description": "Braided USB-C charging cable 2m", "price": 1200, "image": "cable.jpg"},
+    {"id": 15, "name": "Desk Lamp", "description": "LED desk lamp with adjustable brightness", "price": 3500, "image": "lamp.jpg"},
+    {"id": 16, "name": "Wrist Rest", "description": "Memory foam wrist rest for keyboard and mouse", "price": 1800, "image": "wristrest.jpg"},
+    {"id": 17, "name": "Portable Monitor", "description": "15.6 inch portable USB-C monitor", "price": 14800, "image": "portable-monitor.jpg"},
+    {"id": 18, "name": "USB Microphone", "description": "Professional USB condenser microphone", "price": 7200, "image": "mic.jpg"},
+    {"id": 19, "name": "Laptop Sleeve", "description": "Water-resistant neoprene laptop sleeve", "price": 2800, "image": "sleeve.jpg"},
+    {"id": 20, "name": "Docking Station", "description": "Thunderbolt 3 docking station with dual 4K support", "price": 13500, "image": "dock.jpg"},
+]
+
+def get_cart():
+    """Get current cart from session"""
+    return session.get('cart', {})
+
+def get_cart_total():
+    """Calculate total price of items in cart"""
+    cart = get_cart()
+    total = 0
+    for product_id, quantity in cart.items():
+        product = next((p for p in PRODUCTS if p['id'] == int(product_id)), None)
+        if product:
+            total += product['price'] * quantity
+    return total
+
+def validate_email(email):
+    """Validate email format"""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email) is not None
+
+def sanitize_input(text):
+    """Sanitize user input to prevent injection attacks"""
+    if not text:
+        return ""
+    # Remove potentially dangerous characters
+    text = text.replace('<', '&lt;').replace('>', '&gt;')
+    text = text.replace('"', '&quot;').replace("'", '&#x27;')
+    text = text.replace('/', '&#x2F;')
+    return text
+
+@app.route('/')
+def home():
+    """Home page with shop information"""
+    return render_template('home.html')
+
+@app.route('/products')
+def products():
+    """Product list page with search functionality"""
+    search_query = request.args.get('search', '').lower()
+    
+    if search_query:
+        filtered_products = [p for p in PRODUCTS if search_query in p['name'].lower()]
+    else:
+        filtered_products = PRODUCTS
+    
+    return render_template('products.html', products=filtered_products, search_query=search_query)
+
+@app.route('/rate_product/<int:product_id>', methods=['POST'])
+def rate_product(product_id):
+    """Handle product rating"""
+    rating = request.form.get('rating')
+    if rating and 1 <= int(rating) <= 5:
+        # In a real application, this would be stored in a database
+        flash(f'Thank you for rating this product {rating} stars!', 'success')
+    return redirect(url_for('products'))
+
+@app.route('/add_to_cart/<int:product_id>')
+def add_to_cart(product_id):
+    """Add product to shopping cart"""
+    cart = get_cart()
+    cart[str(product_id)] = cart.get(str(product_id), 0) + 1
+    session['cart'] = cart
+    flash('Product added to cart!', 'success')
+    return redirect(url_for('products'))
+
+@app.route('/cart')
+def cart():
+    """Shopping cart page"""
+    cart = get_cart()
+    cart_items = []
+    for product_id, quantity in cart.items():
+        product = next((p for p in PRODUCTS if p['id'] == int(product_id)), None)
+        if product:
+            cart_items.append({
+                'product': product,
+                'quantity': quantity,
+                'subtotal': product['price'] * quantity
+            })
+    
+    total = get_cart_total()
+    return render_template('cart.html', cart_items=cart_items, total=total)
+
+@app.route('/update_cart/<int:product_id>', methods=['POST'])
+def update_cart(product_id):
+    """Update quantity of item in cart"""
+    quantity = int(request.form.get('quantity', 1))
+    cart = get_cart()
+    
+    if quantity <= 0:
+        cart.pop(str(product_id), None)
+        flash('Item removed from cart', 'info')
+    else:
+        cart[str(product_id)] = quantity
+        flash('Cart updated!', 'success')
+    
+    session['cart'] = cart
+    return redirect(url_for('cart'))
+
+@app.route('/remove_from_cart/<int:product_id>')
+def remove_from_cart(product_id):
+    """Remove item from cart"""
+    cart = get_cart()
+    cart.pop(str(product_id), None)
+    session['cart'] = cart
+    flash('Item removed from cart', 'info')
+    return redirect(url_for('cart'))
+
+@app.route('/enquiry', methods=['GET', 'POST'])
+def enquiry():
+    """Enquiry form page"""
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        subject = request.form.get('subject', '').strip()
+        message = request.form.get('message', '').strip()
+        
+        # Validation
+        errors = []
+        if not name:
+            errors.append('Name is required')
+        if not email:
+            errors.append('Email is required')
+        elif not validate_email(email):
+            errors.append('Invalid email format')
+        if not subject:
+            errors.append('Subject is required')
+        if not message:
+            errors.append('Message is required')
+        
+        if errors:
+            for error in errors:
+                flash(error, 'error')
+            return render_template('enquiry.html')
+        
+        # Sanitize inputs
+        name = sanitize_input(name)
+        email = sanitize_input(email)
+        subject = sanitize_input(subject)
+        message = sanitize_input(message)
+        
+        # Store in session for confirmation page
+        session['enquiry_data'] = {
+            'name': name,
+            'email': email,
+            'subject': subject,
+            'message': message,
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+        return redirect(url_for('enquiry_confirmation'))
+    
+    return render_template('enquiry.html')
+
+@app.route('/enquiry/confirmation')
+def enquiry_confirmation():
+    """Confirmation page after enquiry submission"""
+    enquiry_data = session.get('enquiry_data')
+    if not enquiry_data:
+        return redirect(url_for('enquiry'))
+    
+    return render_template('enquiry_confirmation.html', data=enquiry_data)
+
+@app.route('/checkout')
+def checkout():
+    """Checkout page (demo only - no payment processing)"""
+    cart = get_cart()
+    if not cart:
+        flash('Your cart is empty', 'warning')
+        return redirect(url_for('cart'))
+    
+    cart_items = []
+    for product_id, quantity in cart.items():
+        product = next((p for p in PRODUCTS if p['id'] == int(product_id)), None)
+        if product:
+            cart_items.append({
+                'product': product,
+                'quantity': quantity,
+                'subtotal': product['price'] * quantity
+            })
+    
+    total = get_cart_total()
+    return render_template('checkout.html', cart_items=cart_items, total=total)
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Products - IKW Store{% endblock %}
+
+{% block content %}
+<div class="products-container">
+    <h1>Our Products</h1>
+    
+    <div class="search-section">
+        <form method="GET" action="{{ url_for('products') }}" class="search-form">
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Search products..." 
+                value="{{ search_query }}"
+                class="search-input"
+            >
+            <button type="submit" class="btn btn-search">Search</button>
+            {% if search_query %}
+                <a href="{{ url_for('products') }}" class="btn btn-clear">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{{ url_for('static', filename='images/' + product.image) }}" 
+                         alt="{{ product.name }}"
+                         onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="product-rating">
+                        <form method="POST" action="{{ url_for('rate_product', product_id=product.id) }}" class="rating-form">
+                            <label>Rate this product:</label>
+                            <select name="rating" onchange="this.form.submit()">
+                                <option value="">-- Select --</option>
+                                <option value="1">1 ⭐</option>
+                                <option value="2">2 ⭐⭐</option>
+                                <option value="3">3 ⭐⭐⭐</option>
+                                <option value="4">4 ⭐⭐⭐⭐</option>
+                                <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                            </select>
+                        </form>
+                    </div>
+                    <div class="product-footer">
+                        <span class="product-price">¥{{ product.price }}</span>
+                        <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-add-cart">
+                            Add to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-products">
+            <p>No products found matching your search.</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary">View All Products</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

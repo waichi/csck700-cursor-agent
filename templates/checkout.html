@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - IKW Store{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1>Checkout</h1>
+    
+    <div class="checkout-content">
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div class="checkout-items">
+                {% for item in cart_items %}
+                <div class="checkout-item">
+                    <div class="item-info">
+                        <strong>{{ item.product.name }}</strong>
+                        <p>{{ item.product.description }}</p>
+                    </div>
+                    <div class="item-details">
+                        <span>Qty: {{ item.quantity }}</span>
+                        <span class="item-price">¥{{ item.subtotal }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="checkout-total">
+                <div class="total-line">
+                    <span>Subtotal:</span>
+                    <span>¥{{ total }}</span>
+                </div>
+                <div class="total-line">
+                    <span>Shipping:</span>
+                    <span>To be calculated</span>
+                </div>
+                <div class="total-line total-final">
+                    <span><strong>Total:</strong></span>
+                    <span><strong>¥{{ total }}</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-note">
+            <div class="note-box">
+                <h3>ℹ️ Demo Checkout</h3>
+                <p>This is a demonstration checkout page. Payment processing is not implemented as part of this study.</p>
+                <p>In a production environment, this page would include:</p>
+                <ul>
+                    <li>Shipping information form</li>
+                    <li>Payment method selection</li>
+                    <li>Secure payment gateway integration</li>
+                    <li>Order confirmation and tracking</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="checkout-actions">
+        <a href="{{ url_for('cart') }}" class="btn btn-secondary">Back to Cart</a>
+        <a href="{{ url_for('products') }}" class="btn btn-primary">Continue Shopping</a>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Enquiry Submitted - IKW Store{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <div class="confirmation-icon">✓</div>
+        <h1>Enquiry Submitted Successfully!</h1>
+        <p class="confirmation-message">Thank you for contacting us. We have received your enquiry and will respond shortly.</p>
+
+        <div class="enquiry-summary">
+            <h2>Your Enquiry Details</h2>
+            <div class="summary-item">
+                <strong>Name:</strong> {{ data.name }}
+            </div>
+            <div class="summary-item">
+                <strong>Email:</strong> {{ data.email }}
+            </div>
+            <div class="summary-item">
+                <strong>Subject:</strong> {{ data.subject }}
+            </div>
+            <div class="summary-item">
+                <strong>Message:</strong>
+                <p class="message-content">{{ data.message }}</p>
+            </div>
+            <div class="summary-item">
+                <strong>Submitted:</strong> {{ data.timestamp }}
+            </div>
+        </div>
+
+        <div class="confirmation-actions">
+            <a href="{{ url_for('home') }}" class="btn btn-primary">Back to Home</a>
+            <a href="{{ url_for('products') }}" class="btn btn-secondary">Browse Products</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

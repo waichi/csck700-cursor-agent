@@ -367,6 +367,14 @@ body {
     border-radius: 5px;
 }
 
+.no-ratings {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 0.3rem;
+    text-align: center;
+}
+
 .product-footer {
     display: flex;
     justify-content: space-between;

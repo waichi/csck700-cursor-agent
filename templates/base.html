@@ -201,20 +201,6 @@
         
         // Update rating display after submission
         function updateRatingDisplay(productId, ratingValue) {
-            const ratingDisplay = document.querySelector('#rating-form-' + productId + ' .rating-display');
-            if (ratingDisplay) {
-                ratingDisplay.textContent = 'Your rating: ' + ratingValue + ' ⭐';
-            } else {
-                // Create rating display if it doesn't exist
-                const form = document.getElementById('rating-form-' + productId);
-                if (form) {
-                    const display = document.createElement('div');
-                    display.className = 'rating-display';
-                    display.textContent = 'Your rating: ' + ratingValue + ' ⭐';
-                    form.appendChild(display);
-                }
-            }
-            
             // Update average rating from the flash message
             // The flash message contains the average and count
             setTimeout(function() {
@@ -228,6 +214,13 @@
                         
                         let averageDisplay = document.querySelector('#rating-form-' + productId + ' .average-rating');
                         if (!averageDisplay) {
+                            // Remove no-ratings message if it exists
+                            const noRatings = document.querySelector('#rating-form-' + productId + ' .no-ratings');
+                            if (noRatings) {
+                                noRatings.remove();
+                            }
+                            
+                            // Create average rating display
                             const form = document.getElementById('rating-form-' + productId);
                             if (form) {
                                 averageDisplay = document.createElement('div');

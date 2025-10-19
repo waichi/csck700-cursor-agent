@@ -6,6 +6,9 @@ import re
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-in-production'
 
+# Global storage for product ratings (in production, use a database)
+PRODUCT_RATINGS = {}  # {product_id: [list of ratings]}
+
 # Product data - 20 computer accessories
 PRODUCTS = [
     {"id": 1, "name": "Wireless Mouse", "description": "Ergonomic wireless mouse with 2.4GHz connectivity", "price": 2500, "image": "mouse.svg"},
@@ -37,6 +40,17 @@ def get_cart():
 def get_ratings():
     """Get current ratings from session"""
     return session.get('ratings', {})
+
+def get_average_rating(product_id):
+    """Calculate average rating for a product"""
+    ratings = PRODUCT_RATINGS.get(product_id, [])
+    if not ratings:
+        return None
+    return round(sum(ratings) / len(ratings), 1)
+
+def get_rating_count(product_id):
+    """Get total number of ratings for a product"""
+    return len(PRODUCT_RATINGS.get(product_id, []))
 
 def get_cart_total():
     """Calculate total price of items in cart"""
@@ -116,21 +130,46 @@ def products():
     else:
         filtered_products = PRODUCTS
     
-    # Get ratings for all products
-    ratings = get_ratings()
+    # Get user's ratings from session
+    user_ratings = get_ratings()
     
-    return render_template('products.html', products=filtered_products, search_query=search_query, ratings=ratings)
+    # Calculate average ratings for all products
+    product_averages = {}
+    for product in filtered_products:
+        product_averages[product['id']] = {
+            'average': get_average_rating(product['id']),
+            'count': get_rating_count(product['id'])
+        }
+    
+    return render_template('products.html', 
+                         products=filtered_products, 
+                         search_query=search_query, 
+                         user_ratings=user_ratings,
+                         product_averages=product_averages)
 
 @app.route('/rate_product/<int:product_id>', methods=['POST'])
 def rate_product(product_id):
     """Handle product rating"""
     rating = request.form.get('rating')
     if rating and 1 <= int(rating) <= 5:
-        ratings = get_ratings()
-        ratings[str(product_id)] = int(rating)
-        session['ratings'] = ratings
+        rating_value = int(rating)
+        
+        # Add rating to global storage
+        if product_id not in PRODUCT_RATINGS:
+            PRODUCT_RATINGS[product_id] = []
+        PRODUCT_RATINGS[product_id].append(rating_value)
+        
+        # Store user's rating in session
+        user_ratings = get_ratings()
+        user_ratings[str(product_id)] = rating_value
+        session['ratings'] = user_ratings
+        
+        # Calculate new average
+        average = get_average_rating(product_id)
+        count = get_rating_count(product_id)
+        
         product_name = next((p['name'] for p in PRODUCTS if p['id'] == product_id), 'this product')
-        flash(f'Thank you for rating {product_name} {rating} stars!', 'success')
+        flash(f'Thank you for rating {product_name} {rating} stars! (Average: {average}/5 from {count} ratings)', 'success')
     return redirect(url_for('products'))
 
 @app.route('/add_to_cart/<int:product_id>')

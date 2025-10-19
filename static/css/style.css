@@ -356,6 +356,17 @@ body {
     text-align: center;
 }
 
+.average-rating {
+    font-size: 0.85rem;
+    color: #28a745;
+    font-weight: 600;
+    margin-top: 0.3rem;
+    text-align: center;
+    padding: 0.3rem;
+    background: #d4edda;
+    border-radius: 5px;
+}
+
 .product-footer {
     display: flex;
     justify-content: space-between;

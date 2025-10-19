@@ -214,6 +214,35 @@
                     form.appendChild(display);
                 }
             }
+            
+            // Update average rating from the flash message
+            // The flash message contains the average and count
+            setTimeout(function() {
+                const flashMessage = document.querySelector('.flash-success');
+                if (flashMessage) {
+                    const text = flashMessage.textContent;
+                    const match = text.match(/Average: ([\d.]+)\/5 from (\d+) ratings/);
+                    if (match) {
+                        const average = match[1];
+                        const count = match[2];
+                        
+                        let averageDisplay = document.querySelector('#rating-form-' + productId + ' .average-rating');
+                        if (!averageDisplay) {
+                            const form = document.getElementById('rating-form-' + productId);
+                            if (form) {
+                                averageDisplay = document.createElement('div');
+                                averageDisplay.className = 'average-rating';
+                                form.appendChild(averageDisplay);
+                            }
+                        }
+                        
+                        if (averageDisplay) {
+                            const ratingText = count === '1' ? 'rating' : 'ratings';
+                            averageDisplay.textContent = 'Average: ' + average + ' ⭐ (' + count + ' ' + ratingText + ')';
+                        }
+                    }
+                }
+            }, 100);
         }
         
         function highlightStars(rating, value) {

@@ -139,11 +139,45 @@
         document.querySelectorAll('.star-rating').forEach(function(rating) {
             const inputs = rating.querySelectorAll('input[type="radio"]');
             const labels = rating.querySelectorAll('label');
+            const form = rating.closest('form');
+            const productId = rating.getAttribute('data-product-id');
             
             inputs.forEach(function(input) {
                 input.addEventListener('change', function() {
-                    const form = this.closest('form');
-                    form.submit();
+                    const ratingValue = this.value;
+                    
+                    // Submit rating via AJAX
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'rating=' + ratingValue
+                    })
+                    .then(function(response) {
+                        if (response.ok) {
+                            return response.text();
+                        }
+                        throw new Error('Network response was not ok');
+                    })
+                    .then(function(html) {
+                        // Parse the response to get the flash message
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const flashMessages = doc.querySelectorAll('.flash-success');
+                        
+                        // Show success notification
+                        if (flashMessages.length > 0) {
+                            showNotification(flashMessages[0].textContent, 'success');
+                        }
+                        
+                        // Update the rating display
+                        updateRatingDisplay(productId, ratingValue);
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+                        showNotification('Error submitting rating', 'error');
+                    });
                 });
             });
             
@@ -164,6 +198,23 @@
                 });
             });
         });
+        
+        // Update rating display after submission
+        function updateRatingDisplay(productId, ratingValue) {
+            const ratingDisplay = document.querySelector('#rating-form-' + productId + ' .rating-display');
+            if (ratingDisplay) {
+                ratingDisplay.textContent = 'Your rating: ' + ratingValue + ' ⭐';
+            } else {
+                // Create rating display if it doesn't exist
+                const form = document.getElementById('rating-form-' + productId);
+                if (form) {
+                    const display = document.createElement('div');
+                    display.className = 'rating-display';
+                    display.textContent = 'Your rating: ' + ratingValue + ' ⭐';
+                    form.appendChild(display);
+                }
+            }
+        }
         
         function highlightStars(rating, value) {
             const labels = rating.querySelectorAll('label');

@@ -499,10 +499,16 @@ body {
     color: white;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
 }
 
 .btn-add-cart:hover {
     background: #218838;
+}
+
+.btn-add-cart:active {
+    transform: scale(0.95);
 }
 
 .btn-search {
@@ -782,6 +788,42 @@ body {
     margin: 0 auto;
     padding: 0 2rem;
     text-align: center;
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    max-width: 300px;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-success {
+    background: #28a745;
+    color: white;
+}
+
+.notification-error {
+    background: #dc3545;
+    color: white;
+}
+
+.notification-info {
+    background: #17a2b8;
+    color: white;
 }
 
 /* Animations */

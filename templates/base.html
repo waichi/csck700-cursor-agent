@@ -50,6 +50,91 @@
     </footer>
 
     <script>
+        // Add to cart via AJAX
+        function addToCart(productId, productName) {
+            fetch('/add_to_cart/' + productId)
+                .then(function(response) {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('Network response was not ok');
+                })
+                .then(function(html) {
+                    // Parse the response to get the flash message
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const flashMessages = doc.querySelectorAll('.flash-success');
+                    
+                    // Show success message
+                    if (flashMessages.length > 0) {
+                        showNotification(productName + ' added to cart!', 'success');
+                    }
+                    
+                    // Update cart count in navigation
+                    updateCartCount();
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    showNotification('Error adding product to cart', 'error');
+                });
+        }
+        
+        // Update cart count in navigation
+        function updateCartCount() {
+            fetch('/cart')
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(html) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const cartCount = doc.querySelector('.cart-count');
+                    
+                    if (cartCount) {
+                        const navCartCount = document.querySelector('.cart-count');
+                        if (navCartCount) {
+                            navCartCount.textContent = cartCount.textContent;
+                        } else {
+                            // Add cart count if it doesn't exist
+                            const cartLink = document.querySelector('.nav-link[href*="cart"]');
+                            if (cartLink) {
+                                cartLink.innerHTML = 'Cart ' + cartCount.outerHTML;
+                            }
+                        }
+                    }
+                });
+        }
+        
+        // Show notification
+        function showNotification(message, type) {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(function(notif) {
+                notif.remove();
+            });
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification notification-' + type;
+            notification.textContent = message;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(function() {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Hide and remove after 3 seconds
+            setTimeout(function() {
+                notification.classList.remove('show');
+                setTimeout(function() {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+        
         // Interactive star rating
         document.querySelectorAll('.star-rating').forEach(function(rating) {
             const inputs = rating.querySelectorAll('input[type="radio"]');

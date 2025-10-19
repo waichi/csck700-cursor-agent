@@ -56,9 +56,9 @@
                     </div>
                     <div class="product-footer">
                         <span class="product-price">¥{{ product.price }}</span>
-                        <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-add-cart">
+                        <button class="btn btn-add-cart" onclick="addToCart({{ product.id }}, '{{ product.name }}')">
                             Add to Cart
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>

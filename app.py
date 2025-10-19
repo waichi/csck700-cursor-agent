@@ -57,10 +57,28 @@ def sanitize_input(text):
     """Sanitize user input to prevent injection attacks"""
     if not text:
         return ""
-    # Remove potentially dangerous characters
-    text = text.replace('<', '&lt;').replace('>', '&gt;')
-    text = text.replace('"', '&quot;').replace("'", '&#x27;')
-    text = text.replace('/', '&#x2F;')
+    
+    # Import html for proper escaping
+    from html import escape
+    
+    # Escape HTML special characters to prevent XSS attacks
+    text = escape(text, quote=True)
+    
+    # Additional security: Remove potentially dangerous patterns
+    import re
+    
+    # Remove script tags and their content
+    text = re.sub(r'<script[^>]*>.*?</script>', '', text, flags=re.IGNORECASE | re.DOTALL)
+    
+    # Remove javascript: protocol
+    text = re.sub(r'javascript:', '', text, flags=re.IGNORECASE)
+    
+    # Remove on* event handlers (e.g., onclick, onerror, etc.)
+    text = re.sub(r'on\w+\s*=', '', text, flags=re.IGNORECASE)
+    
+    # Remove data: protocol that could be used for data URIs
+    text = re.sub(r'data:\s*text/html', '', text, flags=re.IGNORECASE)
+    
     return text
 
 @app.route('/')
@@ -159,14 +177,25 @@ def enquiry():
         errors = []
         if not name:
             errors.append('Name is required')
+        elif len(name) > 100:
+            errors.append('Name must be less than 100 characters')
+            
         if not email:
             errors.append('Email is required')
+        elif len(email) > 255:
+            errors.append('Email must be less than 255 characters')
         elif not validate_email(email):
             errors.append('Invalid email format')
+            
         if not subject:
             errors.append('Subject is required')
+        elif len(subject) > 200:
+            errors.append('Subject must be less than 200 characters')
+            
         if not message:
             errors.append('Message is required')
+        elif len(message) > 2000:
+            errors.append('Message must be less than 2000 characters')
         
         if errors:
             for error in errors:

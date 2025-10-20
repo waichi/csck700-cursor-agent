@@ -55,6 +55,32 @@ This project contains a fully functional shopping web application built with Fla
    
    **Note:** Port 5000 is used by macOS AirPlay Receiver. The application runs on port 5001 to avoid conflicts.
 
+### Testing
+
+The application includes a comprehensive test suite with 56 test cases covering all functional requirements.
+
+**Run all tests:**
+```bash
+pytest test_app.py -v
+```
+
+**Run tests with coverage report:**
+```bash
+pytest test_app.py --cov=app --cov-report=html
+```
+
+**Test coverage includes:**
+- ✅ Navigation functionality (4 tests)
+- ✅ Home page display (6 tests)
+- ✅ Product list and search (14 tests)
+- ✅ Shopping cart operations (11 tests)
+- ✅ Enquiry form validation (11 tests)
+- ✅ Product rating system (5 tests)
+- ✅ Security and non-functional requirements (3 tests)
+- ✅ Performance benchmarks (2 tests)
+
+See `TEST_CASES.md` for detailed test case documentation.
+
 ### Project Structure
 
 ```
